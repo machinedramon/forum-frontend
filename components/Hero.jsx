@@ -1,12 +1,40 @@
+// components/Hero.jsx
+"use client";
 import React, { useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button, Image } from "@nextui-org/react";
-import { FaBook, FaInfoCircle } from "react-icons/fa";
+import {
+  Button,
+  Image,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Chip,
+  useDisclosure,
+  ScrollShadow,
+} from "@nextui-org/react";
+import { FaBook } from "react-icons/fa";
 import { LayoutContext } from "@/context/LayoutContext";
+import { useRouter } from "next/navigation";
+import { BookContext } from "@/context/BookContext";
 
 const animationVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
+};
+
+const truncateText = (text, limit) => {
+  if (text.length > limit) {
+    return text.substring(0, limit) + "...";
+  }
+  return text;
+};
+
+const getDynamicFontSize = (textLength) => {
+  if (textLength > 40) return "text-3xl";
+  if (textLength > 30) return "text-4xl";
+  return "text-5xl";
 };
 
 const Hero = ({
@@ -16,8 +44,21 @@ const Hero = ({
   pdfLink,
   publication_year,
   subjects,
+  id,
 }) => {
   const { isHeroExpanded } = useContext(LayoutContext);
+  const { isOpen, onOpenChange } = useDisclosure();
+  const router = useRouter();
+  const { setSelectedBook } = useContext(BookContext);
+
+  if (!title) return null;
+
+  const displayedSubjects = subjects.slice(0, 3);
+  const remainingSubjects = subjects.length - displayedSubjects.length;
+
+  const handleMoreInfoClick = () => {
+    router.push(`/book/${id}`);
+  };
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -36,6 +77,7 @@ const Hero = ({
         <AnimatePresence>
           {isHeroExpanded && (
             <motion.div
+              key={`${title}-logo`}
               className="absolute top-0 left-0 py-4"
               initial="hidden"
               animate="visible"
@@ -50,7 +92,8 @@ const Hero = ({
         <div className="flex flex-col space-y-4 relative">
           <AnimatePresence>
             <motion.h1
-              className="text-5xl font-extrabold"
+              key={`${title}-heading`}
+              className={`font-extrabold ${getDynamicFontSize(title.length)}`}
               initial="hidden"
               animate="visible"
               exit="hidden"
@@ -60,7 +103,8 @@ const Hero = ({
               {title}
             </motion.h1>
             <motion.div
-              className="flex gap-x-4"
+              key={`${title}-details`}
+              className="flex gap-x-4 items-center"
               initial="hidden"
               animate="visible"
               exit="hidden"
@@ -70,12 +114,80 @@ const Hero = ({
               <p className="text-md font-bold text-[#46D369]">
                 {publication_year}
               </p>
-              <p className="text-md font-light">
-                <b className="font-bold mr-1">Assuntos:</b>
-                {subjects.join(", ")}
-              </p>
+              <div className="flex items-center">
+                <span className="text-md font-light flex items-center">
+                  <b className="font-bold mr-1">Assuntos:</b>
+                  {displayedSubjects.join(",")}
+                  {remainingSubjects > 0 && (
+                    <>
+                      <Button
+                        isIconOnly
+                        type="button"
+                        variant="flat"
+                        size="md"
+                        className="ml-2 cursor-pointer"
+                        aria-label="Mostrar mais assuntos"
+                        onPress={() => onOpenChange(true)}
+                        onTouchStart={() => onOpenChange(true)}
+                      >
+                        +{remainingSubjects}
+                      </Button>
+                      <Modal
+                        isOpen={isOpen}
+                        placement="auto"
+                        onOpenChange={onOpenChange}
+                        className="bg-black max-w-fit"
+                        closeButton={false}
+                        classNames={{ closeButton: "hidden" }}
+                      >
+                        <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl">
+                          {(onClose) => (
+                            <>
+                              <ModalHeader className="flex flex-col gap-1">
+                                Todos os Assuntos
+                              </ModalHeader>
+                              <ScrollShadow className="max-w-fit max-h-[400px] px-4 text-black rounded-md shadow-lg overflow-y-auto">
+                                <ModalBody>
+                                  <div className="flex flex-col gap-2 overflow-hidden break-words">
+                                    {subjects.map((subject, index) => (
+                                      <Chip
+                                        key={`${subject}-${index}`}
+                                        color="primary"
+                                        radius="sm"
+                                        className="break-words"
+                                        style={{
+                                          backgroundColor: "#000",
+                                          maxWidth: "100%",
+                                        }}
+                                      >
+                                        • {subject}
+                                      </Chip>
+                                    ))}
+                                  </div>
+                                </ModalBody>
+                              </ScrollShadow>
+                              <ModalFooter>
+                                <Button
+                                  color="primary"
+                                  variant="solid"
+                                  size="sm"
+                                  onPress={onClose}
+                                  className="text-[#fff]"
+                                >
+                                  Fechar
+                                </Button>
+                              </ModalFooter>
+                            </>
+                          )}
+                        </ModalContent>
+                      </Modal>
+                    </>
+                  )}
+                </span>
+              </div>
             </motion.div>
             <motion.p
+              key={`${title}-summary`}
               className="text-xl font-medium max-w-[40vw]"
               initial="hidden"
               animate="visible"
@@ -83,9 +195,10 @@ const Hero = ({
               variants={animationVariants}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              {summary}
+              {truncateText(summary, 160)}
             </motion.p>
             <motion.div
+              key={`${title}-buttons`}
               className="flex space-x-4 mt-4"
               initial="hidden"
               animate="visible"
@@ -103,12 +216,13 @@ const Hero = ({
                 className="rounded-md"
                 startContent={<FaBook />}
               >
-                Ler
+                Iniciar
               </Button>
               <Button
                 className="text-white rounded-md"
                 variant="solid"
                 color="default"
+                onClick={handleMoreInfoClick}
               >
                 Mais Informações
               </Button>

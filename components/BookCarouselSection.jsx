@@ -1,35 +1,24 @@
-import React, { useContext, useState, useEffect } from "react";
+"use client";
+import React, { useContext, useState } from "react";
 import { Image } from "@nextui-org/react";
 import Slider from "react-slick";
-import axios from "axios";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { BookContext } from "../context/BookContext";
 
-const BookCarouselSection = () => {
-  const [books, setBooks] = useState([]);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+const BookCarouselSection = ({ books }) => {
   const { setSelectedBook } = useContext(BookContext);
+  const [selectedBookId, setSelectedBookId] = useState(null);
 
-  const fetchBooks = async (page) => {
-    try {
-      const response = await axios.get("http://localhost:3001/livros", {
-        params: {
-          page,
-          pageSize: 10,
-        },
-      });
-      setBooks((prevBooks) => [...prevBooks, ...response.data.results]);
-      setHasMore(response.data.totalPages > page);
-    } catch (error) {
-      console.error("Erro ao buscar livros:", error);
-    }
+  const getCoverImageUrl = (id) => {
+    const [firstPart, secondPart] = id.split("-");
+    return `https://bid1006-production-public.s3-sa-east-1.amazonaws.com/books/cover/${firstPart}/editions/${secondPart}.jpg`;
   };
 
-  useEffect(() => {
-    fetchBooks(page);
-  }, [page]);
+  const handleBookSelect = (book) => {
+    setSelectedBook(book);
+    setSelectedBookId(book.id);
+  };
 
   const settings = {
     slidesToShow: 7.5,
@@ -59,28 +48,27 @@ const BookCarouselSection = () => {
         },
       },
     ],
-    afterChange: (currentSlide) => {
-      if (hasMore && currentSlide + 5 >= books.length) {
-        setPage((prevPage) => prevPage + 1);
-      }
-    },
   };
 
   return (
-    <div className="w-full h-full bg-black transition-all">
+    <div className="w-full h-full bg-black transition-all ease-in-out">
       <h2 className="text-3xl font-bold mb-4">Livros</h2>
       <Slider {...settings} className="">
         {books.map((book) => (
           <div
             key={book.id}
-            className="p-1 flex justify-center items-center h-[80%]"
-            onClick={() => setSelectedBook(book)}
+            className={`p-1 flex justify-center items-center h-[80%]`}
+            onClick={() => handleBookSelect(book)}
           >
-            <div className="overflow-hidden flex justify-center items-center py-[5.5px] hover:scale-105 transition-all">
+            <div
+              className={`overflow-hidden flex justify-center items-center py-[5.5px] transition-all ${
+                book.id === selectedBookId ? "scale-105" : "hover:scale-105"
+              }`}
+            >
               <Image
                 loading="lazy"
-                src={book.cover_image}
-                alt={book.title}
+                src={getCoverImageUrl(book.id)}
+                alt={book.text_2}
                 className="object-cover h-[220px] w-[160px] rounded-md transition-all"
               />
             </div>

@@ -1,15 +1,16 @@
-import Layout from "@/components/Layout";
-import { LayoutProvider } from "@/context/LayoutContext";
-import { Providers } from "./providers";
+/* eslint-disable react/no-unescaped-entities */
+// app/page.js
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import MainLayout from "@/components/MainLayout";
 
 export default function Home() {
-  return (
-    <main className="">
-      <Providers>
-        <main className="dark text-foreground bg-background">
-          <Layout />
-        </main>
-      </Providers>
-    </main>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/home");
+  }, [router]);
+
+  return <MainLayout></MainLayout>;
 }

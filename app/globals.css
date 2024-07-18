@@ -2,6 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .glassmorphism {
+    @apply bg-black bg-opacity-95 rounded-2xl shadow-lg filter;
+    border: 1px solid rgba(0, 0, 0, 0.19);
+  }
+}
+
+.neon-effect {
+  position: relative;
+  z-index: 1;
+}
+
+.neon-effect::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, #D7282F, #004C92, #D7282F, #004C92);
+  background-size: 400%;
+  filter: blur(45px);
+  z-index: -1;
+  border-radius: 8px;
+  animation: neonBreath 32s infinite;
+}
+
+@keyframes neonBreath {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.highlight {
+  background-color: #da002b;
+  font-weight: bold;
+  color: #fff;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #da002b #000;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
