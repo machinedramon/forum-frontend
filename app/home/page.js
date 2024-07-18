@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import MainLayout from "@/components/MainLayout";
@@ -38,7 +39,7 @@ const Home = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get("http://localhost:9900/books", {
+      const response = await axios.get("http://52.0.192.118:9900/books", {
         params: { limit: 50 },
       });
       setBooks(response.data.results);

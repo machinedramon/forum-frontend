@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
@@ -123,7 +124,9 @@ const BookDetails = ({ params }) => {
 
   const fetchBookDetails = async (bookId) => {
     try {
-      const response = await axios.get(`http://localhost:9900/books/${bookId}`);
+      const response = await axios.get(
+        `http://52.0.192.118:9900/books/${bookId}`
+      );
       setBook(response.data);
       const initialEdition = response.data.editions[0]; // Seleciona a primeira edição
       setSelectedEdition(initialEdition);

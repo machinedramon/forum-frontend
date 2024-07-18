@@ -122,7 +122,7 @@ const SearchPage = () => {
       const startTime = Date.now();
 
       try {
-        const response = await axios.post("http://localhost:9900/smartsearch", {
+        const response = await axios.post("http://52.0.192.118:9900/smartsearch", {
           query,
         });
         const endTime = Date.now();
