@@ -39,7 +39,7 @@ const Home = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get("http://52.0.192.118:9900/books", {
+      const response = await axios.post("http://52.0.192.118:9900/books", {
         params: { size: 50 },
       });
       setBooks(response.data);
