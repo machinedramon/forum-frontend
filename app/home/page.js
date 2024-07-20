@@ -40,10 +40,10 @@ const Home = () => {
   const fetchBooks = async () => {
     try {
       const response = await axios.get("http://52.0.192.118:9900/books", {
-        params: { limit: 50 },
+        params: { size: 50 },
       });
-      setBooks(response.data.results);
-      setSelectedBook(response.data.results[0]);
+      setBooks(response.data);
+      setSelectedBook(response.data[0]);
     } catch (error) {
       console.error("Error fetching books:", error);
     }
