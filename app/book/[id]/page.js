@@ -398,7 +398,7 @@ const BookDetails = ({ params }) => {
                       <div>
                         <Accordion
                           variant="shadow"
-                          defaultExpandedKeys={["pre-textual"]}
+                          // defaultExpandedKeys={["pre-textual"]}
                         >
                           <AccordionItem
                             key="pre-textual"
