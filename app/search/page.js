@@ -122,7 +122,7 @@ const SearchPage = () => {
       const startTime = Date.now();
 
       try {
-        const response = await axios.post("http://52.0.192.118:9900/smartsearch", {
+        const response = await axios.post("http://localhost:9900/smartsearch", {
           query,
         });
         const endTime = Date.now();
@@ -133,16 +133,10 @@ const SearchPage = () => {
 
         setSearchTerms(response.data.searchTerms);
 
-        const hits = response.data.hits.hits.filter((hit) =>
-          response.data.searchTerms.some((term) =>
-            Object.values(hit._source).some((value) =>
-              value?.toString().toLowerCase().includes(term)
-            )
-          )
-        );
+        const hits = response.data.hits.hits;
 
         // Log hits for debugging
-        console.log("Filtered hits:", hits);
+        console.log("Hits:", hits);
 
         setResults(hits);
         setTotalOccurrences(hits.length);

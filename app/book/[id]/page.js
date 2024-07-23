@@ -124,11 +124,12 @@ const BookDetails = ({ params }) => {
 
   const fetchBookDetails = async (bookId) => {
     try {
-      const response = await axios.get(
-        `http://52.0.192.118:9900/books/${bookId}`
-      );
-      setBook(response.data);
-      const initialEdition = response.data.editions[0]; // Seleciona a primeira edição
+      const response = await axios.post(`http://localhost:9900/books`, {
+        params: { size: 1, id: bookId }, // Assuming there's a way to filter by id
+      });
+      const bookData = response.data.hits.hits[0]._source;
+      setBook(bookData);
+      const initialEdition = bookData.editions[0]; // Seleciona a primeira edição
       setSelectedEdition(initialEdition);
       const url = getCoverImageUrl(firstPart, initialEdition.num_id);
       setCoverImageUrl(url);

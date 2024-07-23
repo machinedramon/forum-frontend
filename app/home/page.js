@@ -39,11 +39,12 @@ const Home = () => {
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.post("http://52.0.192.118:9900/books", {
+      const response = await axios.post("http://localhost:9900/books", {
         params: { size: 50 },
       });
-      setBooks(response.data);
-      setSelectedBook(response.data[0]);
+      const booksData = response.data.hits.hits.map((hit) => hit._source);
+      setBooks(booksData);
+      setSelectedBook(booksData[0]);
     } catch (error) {
       console.error("Error fetching books:", error);
     }

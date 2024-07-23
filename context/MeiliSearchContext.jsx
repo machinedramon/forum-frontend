@@ -17,7 +17,7 @@ export const MeiliSearchProvider = ({ children }) => {
     try {
       const start = performance.now();
       const response = await axios.get(
-        "http://52.0.192.118:7700/indexes/livros/search",
+        "http://localhost:7700/indexes/livros/search",
         {
           headers: {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_MEILISEARCH_API_KEY}`,
