@@ -124,7 +124,7 @@ const BookDetails = ({ params }) => {
 
   const fetchBookDetails = async (bookId) => {
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         `http://52.0.192.118:9910/books/${bookId}`,
         { params: { verbose: true } } // Certifique-se de passar o parâmetro verbose se necessário
       );
