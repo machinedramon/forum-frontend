@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React, { useEffect, useState, useRef } from "react";
+import { useMediaQuery } from "react-responsive";
 import axios from "axios";
 import {
   Tabs,
@@ -56,6 +57,7 @@ const BookDetails = ({ params }) => {
   const pdfViewerRef = useRef(null);
   const [isBibModalOpen, setIsBibModalOpen] = useState(false);
   const [bibText, setBibText] = useState("");
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const [firstPart, secondPart] = id.split("-");
 
@@ -291,6 +293,24 @@ const BookDetails = ({ params }) => {
       <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent"></div>
       <div className="relative z-10 h-full w-full overflow-y-auto p-4 bg-black bg-opacity-75 text-white flex flex-col md:flex-row">
         <div className="flex flex-col md:flex-row md:w-1/3 items-center justify-center mb-4 md:mb-0">
+          <div className="min-h-[320px] flex items-center justify-center">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={coverImageUrl}
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -100, opacity: 0 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                <Image
+                  src={coverImageUrl}
+                  alt={title}
+                  className="w-40 md:w-auto md:h-[500px] rounded-md object-cover"
+                  style={{ objectFit: "cover", objectPosition: "top" }}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
           <div className="flex w-full items-center justify-center md:hidden mb-4">
             <Chip color="primary" size="lg" radius="sm" className="mr-2 py-5">
               Livro
@@ -312,24 +332,6 @@ const BookDetails = ({ params }) => {
                 </SelectItem>
               ))}
             </Select>
-          </div>
-          <div className="min-h-[320px] flex items-center justify-center">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={coverImageUrl}
-                initial={{ x: 100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: -100, opacity: 0 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
-              >
-                <Image
-                  src={coverImageUrl}
-                  alt={title}
-                  className="w-40 md:w-auto md:h-[500px] rounded-md object-cover"
-                  style={{ objectFit: "cover", objectPosition: "top" }}
-                />
-              </motion.div>
-            </AnimatePresence>
           </div>
         </div>
         <div className="w-full md:w-2/3 flex flex-col h-full">
@@ -359,11 +361,11 @@ const BookDetails = ({ params }) => {
             <h1 className="text-2xl md:text-4xl font-bold mb-2">{title}</h1>
             <h2 className="text-xl md:text-2xl mb-4">{subtitle}</h2>
             <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-4">
-              <Button color="primary" startContent={<FaFolderPlus />}>
+              <Button color="default" startContent={<FaFolderPlus />}>
                 Adicionar à pasta
               </Button>
               <Button
-                color="primary"
+                color="default"
                 startContent={<FaBook />}
                 onClick={handleBibReference}
               >
@@ -371,8 +373,8 @@ const BookDetails = ({ params }) => {
               </Button>
             </div>
           </div>
-          <div className="h-auto overflow-y-auto">
-            <Tabs aria-label="Book Details">
+          <div className="h-auto w-full overflow-y-auto">
+            <Tabs fullWidth={isMobile} aria-label="Book Details">
               <Tab key="capitulos" title="Capítulos" className="h-fit">
                 <Card className="h-fit flex flex-col">
                   <CardBody className="overflow-hidden">
@@ -400,7 +402,7 @@ const BookDetails = ({ params }) => {
                           <AccordionItem
                             key="pos-textual"
                             aria-label="Pos-textual"
-                            title={"Pos-textual"}
+                            title="Pos-textual"
                           >
                             {renderChapters("pos-textual")}
                           </AccordionItem>
@@ -434,7 +436,7 @@ const BookDetails = ({ params }) => {
 
   return (
     <MainLayout title={title}>
-      <div className="relative w-full h-screen overflow-hidden">
+      <div className="relative w-full h-[90vh] md:h-screen overflow-hidden">
         {selectedPdfUrl ? (
           <div
             ref={pdfViewerRef}

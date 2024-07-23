@@ -18,6 +18,7 @@ import { FaBook } from "react-icons/fa";
 import { LayoutContext } from "@/context/LayoutContext";
 import { useRouter } from "next/navigation";
 import { BookContext } from "@/context/BookContext";
+import { useMediaQuery } from "react-responsive";
 
 const animationVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -32,9 +33,9 @@ const truncateText = (text, limit) => {
 };
 
 const getDynamicFontSize = (textLength) => {
-  if (textLength > 40) return "text-3xl";
-  if (textLength > 30) return "text-4xl";
-  return "text-5xl";
+  if (textLength > 40) return "text-2xl md:text-3xl";
+  if (textLength > 30) return "text-3xl md:text-4xl";
+  return "text-4xl md:text-5xl";
 };
 
 const Hero = ({
@@ -50,11 +51,11 @@ const Hero = ({
   const { isOpen, onOpenChange } = useDisclosure();
   const router = useRouter();
   const { setSelectedBook } = useContext(BookContext);
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   if (!title) return null;
 
-  const displayedSubjects = subjects.slice(0, 3);
-  const remainingSubjects = subjects.length - displayedSubjects.length;
+  const remainingSubjects = subjects.length;
 
   const handleMoreInfoClick = () => {
     router.push(`/book/${id}`);
@@ -71,9 +72,13 @@ const Hero = ({
         animate={{ x: [-40, 40], scale: 1.2 }}
         transition={{ repeat: Infinity, repeatType: "reverse", duration: 20 }}
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+      <div className="absolute h-[104%] inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
       <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent"></div>
-      <div className="relative h-full z-10 py-8 text-white flex flex-col justify-end items-start space-y-4">
+      <div
+        className={`relative h-full z-10 py-8 text-white flex flex-col justify-end items-start space-y-4 ${
+          isMobile ? "p-4" : "p-8"
+        }`}
+      >
         <AnimatePresence>
           {isHeroExpanded && (
             <motion.div
@@ -85,7 +90,11 @@ const Hero = ({
               variants={animationVariants}
               transition={{ duration: 0.5 }}
             >
-              <Image alt="Logo" src="/logo.webp" className="h-[60px]" />
+              <Image
+                alt="Logo"
+                src="/logo.webp"
+                className="h-[40px] md:h-[60px]"
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -117,78 +126,78 @@ const Hero = ({
               <div className="flex items-center">
                 <span className="text-md font-light flex items-center">
                   <b className="font-bold mr-1">Assuntos:</b>
-                  {displayedSubjects.join(",")}
-                  {remainingSubjects > 0 && (
-                    <>
-                      <Button
-                        isIconOnly
-                        type="button"
-                        variant="flat"
-                        size="md"
-                        className="ml-2 cursor-pointer"
-                        aria-label="Mostrar mais assuntos"
-                        onPress={() => onOpenChange(true)}
-                        onTouchStart={() => onOpenChange(true)}
-                      >
-                        +{remainingSubjects}
-                      </Button>
-                      <Modal
-                        isOpen={isOpen}
-                        placement="auto"
-                        onOpenChange={onOpenChange}
-                        className="bg-black max-w-fit"
-                        closeButton={false}
-                        classNames={{ closeButton: "hidden" }}
-                      >
-                        <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl">
-                          {(onClose) => (
-                            <>
-                              <ModalHeader className="flex flex-col gap-1">
-                                Todos os Assuntos
-                              </ModalHeader>
-                              <ScrollShadow className="max-w-fit max-h-[400px] px-4 text-black rounded-md shadow-lg overflow-y-auto">
-                                <ModalBody>
-                                  <div className="flex flex-col gap-2 overflow-hidden break-words">
-                                    {subjects.map((subject, index) => (
-                                      <Chip
-                                        key={`${subject}-${index}`}
-                                        color="primary"
-                                        radius="sm"
-                                        className="break-words"
-                                        style={{
-                                          backgroundColor: "#000",
-                                          maxWidth: "100%",
-                                        }}
-                                      >
-                                        • {subject}
-                                      </Chip>
-                                    ))}
-                                  </div>
-                                </ModalBody>
-                              </ScrollShadow>
-                              <ModalFooter>
-                                <Button
-                                  color="primary"
-                                  variant="solid"
-                                  size="sm"
-                                  onPress={onClose}
-                                  className="text-[#fff]"
-                                >
-                                  Fechar
-                                </Button>
-                              </ModalFooter>
-                            </>
-                          )}
-                        </ModalContent>
-                      </Modal>
-                    </>
-                  )}
+                  {isMobile
+                    ? remainingSubjects > 0 && (
+                        <Button
+                          isIconOnly
+                          type="button"
+                          variant="flat"
+                          size="md"
+                          className="ml-2 cursor-pointer"
+                          aria-label="Mostrar mais assuntos"
+                          onPress={() => onOpenChange(true)}
+                        >
+                          +{remainingSubjects}
+                        </Button>
+                      )
+                    : subjects.slice(0, 3).join(", ")}
+                  <Modal
+                    isOpen={isOpen}
+                    placement="auto"
+                    onOpenChange={onOpenChange}
+                    className="bg-black max-w-fit"
+                    closeButton={false}
+                    classNames={{ closeButton: "hidden" }}
+                  >
+                    <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl">
+                      {(onClose) => (
+                        <>
+                          <ModalHeader className="flex flex-col gap-1">
+                            Todos os Assuntos
+                          </ModalHeader>
+                          <ScrollShadow className="max-w-fit max-h-[400px] px-4 text-black rounded-md shadow-lg overflow-y-auto">
+                            <ModalBody>
+                              <div className="flex flex-col gap-2 overflow-hidden break-words">
+                                {subjects.map((subject, index) => (
+                                  <Chip
+                                    key={`${subject}-${index}`}
+                                    color="primary"
+                                    radius="sm"
+                                    className="break-words"
+                                    style={{
+                                      backgroundColor: "#000",
+                                      maxWidth: "100%",
+                                    }}
+                                  >
+                                    • {subject}
+                                  </Chip>
+                                ))}
+                              </div>
+                            </ModalBody>
+                          </ScrollShadow>
+                          <ModalFooter>
+                            <Button
+                              color="primary"
+                              variant="solid"
+                              size="sm"
+                              onPress={onClose}
+                              className="text-[#fff]"
+                            >
+                              Fechar
+                            </Button>
+                          </ModalFooter>
+                        </>
+                      )}
+                    </ModalContent>
+                  </Modal>
                 </span>
               </div>
             </motion.div>
             <motion.p
               key={`${title}-summary`}
-              className="text-xl font-medium max-w-[40vw]"
+              className={`text-lg md:text-xl font-medium max-w-[90vw] md:max-w-[40vw] ${
+                isMobile ? "text-sm" : "text-xl"
+              }`}
               initial="hidden"
               animate="visible"
               exit="hidden"

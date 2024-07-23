@@ -1,18 +1,21 @@
+// components/BookCarouselSection.jsx
 "use client";
 import React, { useContext, useState } from "react";
 import { Image } from "@nextui-org/react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { BookContext } from "../context/BookContext";
+import { BookContext } from "@/context/BookContext";
+import { useMediaQuery } from "react-responsive";
 
 const BookCarouselSection = ({ books }) => {
   const { setSelectedBook } = useContext(BookContext);
   const [selectedBookId, setSelectedBookId] = useState(null);
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const getCoverImageUrl = (id) => {
     const [firstPart, secondPart] = id.split("-");
-    return `https://bid1006-production-public.s3-sa-east-1.amazonaws.com/books/cover/${firstPart}/editions/${secondPart}.jpg`;
+    return `https://bid1006-production-public.s3.sa-east-1.amazonaws.com/books/cover/${firstPart}/editions/${secondPart}.jpg`;
   };
 
   const handleBookSelect = (book) => {
@@ -21,43 +24,25 @@ const BookCarouselSection = ({ books }) => {
   };
 
   const settings = {
-    slidesToShow: 7.5,
+    slidesToShow: isMobile ? 2 : 7.5,
     arrows: false,
     dots: true,
     infinite: false,
     speed: 500,
     variableWidth: true,
-    slidesToScroll: 5,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToScroll: 4,
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToScroll: 3,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToScroll: 2,
-        },
-      },
-    ],
+    slidesToScroll: isMobile ? 2 : 5,
   };
 
   return (
     <div className="w-full h-full bg-black transition-all ease-in-out">
-      <h2 className="text-3xl font-bold mb-4">Livros</h2>
-      <Slider {...settings} className="">
+      <h2 className="text-2xl md:text-3xl font-bold mb-4">Livros</h2>
+      <Slider {...settings} className="relative">
         {books.map((book) => (
           <div
             key={book.id}
-            className={`p-1 flex justify-center items-center h-[80%]`}
+            className={`p-1 flex justify-center items-center ${
+              isMobile ? "h-[150px]" : "h-[80%]"
+            }`}
             onClick={() => handleBookSelect(book)}
           >
             <div
@@ -69,12 +54,19 @@ const BookCarouselSection = ({ books }) => {
                 loading="lazy"
                 src={getCoverImageUrl(book.id)}
                 alt={book.text_2}
-                className="object-cover h-[220px] w-[160px] rounded-md transition-all"
+                className={`object-cover ${
+                  isMobile ? "h-[140px]" : "h-[220px]"
+                } ${
+                  isMobile ? "w-[100px]" : "w-[160px]"
+                } rounded-md transition-all`}
               />
             </div>
           </div>
         ))}
       </Slider>
+      {isMobile && (
+        <div className="absolute bottom-0 left-0 right-0 h-[50px] bg-gradient-to-t from-black via-transparent to-transparent"></div>
+      )}
     </div>
   );
 };

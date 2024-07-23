@@ -12,5 +12,5 @@ export default function Home() {
     router.replace("/home");
   }, [router]);
 
-  return <MainLayout></MainLayout>;
+  return <MainLayout />;
 }

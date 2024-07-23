@@ -18,7 +18,7 @@ const buttonVariants = {
   visible: { opacity: 1, x: 0 },
 };
 
-const Sidebar = ({ isHovered }) => {
+const Sidebar = ({ isHovered, isMobile }) => {
   const router = useRouter();
   const menuItems = [
     { label: "Início", icon: <Home />, ariaLabel: "Home", path: "/home" },
@@ -50,6 +50,26 @@ const Sidebar = ({ isHovered }) => {
       path: "/mylist",
     },
   ];
+
+  if (isMobile) {
+    return (
+      <div className="flex justify-between w-full">
+        {menuItems.map(({ icon, ariaLabel, path }) => (
+          <Button
+            key={ariaLabel}
+            isIconOnly
+            color="default"
+            variant="light"
+            aria-label={ariaLabel}
+            onClick={() => router.push(path)}
+            className="w-full"
+          >
+            {icon}
+          </Button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <motion.div
