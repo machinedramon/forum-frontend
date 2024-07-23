@@ -124,14 +124,15 @@ const BookDetails = ({ params }) => {
 
   const fetchBookDetails = async (bookId) => {
     try {
-      const response = await axios.post(`http://52.0.192.118:9910/books`, {
-        params: { size: 1, id: bookId }, // Assuming there's a way to filter by id
-      });
-      const bookData = response.data.hits.hits[0]._source;
+      const response = await axios.get(
+        `http://52.0.192.118:9910/books/${bookId}`,
+        { params: { verbose: true } } // Certifique-se de passar o parâmetro verbose se necessário
+      );
+      const bookData = response.data._source;
       setBook(bookData);
       const initialEdition = bookData.editions[0]; // Seleciona a primeira edição
       setSelectedEdition(initialEdition);
-      const url = getCoverImageUrl(firstPart, initialEdition.num_id);
+      const url = getCoverImageUrl(bookId, initialEdition.num_id);
       setCoverImageUrl(url);
     } catch (error) {
       console.error("Error fetching book details:", error);
@@ -140,7 +141,9 @@ const BookDetails = ({ params }) => {
   };
 
   const getCoverImageUrl = (bookId, editionId) => {
-    return `https://bid1006-production-public.s3.sa-east-1.amazonaws.com/books/cover/${bookId}/editions/${editionId}.jpg`;
+    return `https://bid1006-production-public.s3.sa-east-1.amazonaws.com/books/cover/${
+      bookId.split("-")[0]
+    }/editions/${editionId}.jpg`;
   };
 
   useEffect(() => {
