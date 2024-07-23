@@ -124,7 +124,7 @@ const BookDetails = ({ params }) => {
 
   const fetchBookDetails = async (bookId) => {
     try {
-      const response = await axios.post(`http://localhost:9900/books`, {
+      const response = await axios.post(`http://52.0.192.118:9900/books`, {
         params: { size: 1, id: bookId }, // Assuming there's a way to filter by id
       });
       const bookData = response.data.hits.hits[0]._source;
