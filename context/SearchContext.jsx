@@ -15,7 +15,7 @@ export const SearchProvider = ({ children }) => {
     setSearchTime(null);
     try {
       const startTime = performance.now();
-      const response = await axios.post("http://52.0.192.118:9900/search", {
+      const response = await axios.post("http://52.0.192.118:9910/search", {
         query,
       });
       const endTime = performance.now();

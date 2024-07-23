@@ -123,7 +123,7 @@ const SearchPage = () => {
 
       try {
         const response = await axios.post(
-          "http://52.0.192.118:9900/smartsearch",
+          "http://52.0.192.118:9910/smartsearch",
           {
             query,
           }
