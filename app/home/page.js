@@ -27,21 +27,16 @@ const Home = () => {
   const scrollContainerRef = useRef(null);
   const [books, setBooks] = useState([]);
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.post("http://52.0.192.118:9900/books", {
-        params: { size: 50 },
-      });
+      const response = await axios.post(
+        "http://52.0.192.118:9900/books",
+        null,
+        {
+          params: { size: 50, verbose: false }, // Adiciona o parâmetro verbose
+        }
+      );
       const booksData = response.data.hits.hits.map((hit) => hit._source);
       setBooks(booksData);
       setSelectedBook(booksData[0]);
