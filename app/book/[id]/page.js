@@ -365,7 +365,7 @@ const BookDetails = ({ params }) => {
           {/* Chip e Select para desktop */}
           {!isMobile && (
             <div className="hidden md:flex items-center mb-4">
-              <Chip color="primary" radius="sm" className="mr-2">
+              <Chip color="primary" radius="sm" className="mr-2 py-5">
                 Livro
               </Chip>
               <Select

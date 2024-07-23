@@ -72,7 +72,7 @@ const Hero = ({
         animate={{ x: [-40, 40], scale: 1.2 }}
         transition={{ repeat: Infinity, repeatType: "reverse", duration: 20 }}
       />
-      <div className="absolute h-[104%] inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+      <div className="absolute h-[100%] inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
       <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent"></div>
       <div
         className={`relative h-full z-10 py-8 text-white flex flex-col justify-end items-start space-y-4 ${

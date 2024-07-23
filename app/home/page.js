@@ -5,6 +5,7 @@ import MainLayout from "@/components/MainLayout";
 import { LayoutContext } from "@/context/LayoutContext";
 import { BookContext } from "@/context/BookContext";
 import { ScrollShadow } from "@nextui-org/react";
+import { useMediaQuery } from "react-responsive";
 import { motion, AnimatePresence } from "framer-motion";
 import Hero from "@/components/Hero";
 import axios from "axios";
@@ -27,6 +28,7 @@ const Home = () => {
   const scrollContainerRef = useRef(null);
   const [books, setBooks] = useState([]);
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
+  const isIphoneSE = useMediaQuery({ maxHeight: 668 });
 
   const fetchBooks = async () => {
     try {
@@ -130,7 +132,7 @@ const Home = () => {
             <div className="ml-4">
               <motion.section
                 className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
-                style={{ height: "26vh" }}
+                style={{ height: isIphoneSE ? "32vh" : "26vh" }}
                 initial="hidden"
                 animate="visible"
                 variants={sectionVariants}
@@ -140,7 +142,7 @@ const Home = () => {
               </motion.section>
               <motion.section
                 className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
-                style={{ height: "26vh" }}
+                style={{ height: isIphoneSE ? "32vh" : "26vh" }}
                 initial="hidden"
                 animate="visible"
                 variants={sectionVariants}
@@ -150,7 +152,7 @@ const Home = () => {
               </motion.section>
               <motion.section
                 className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
-                style={{ height: "26vh" }}
+                style={{ height: isIphoneSE ? "32vh" : "26vh" }}
                 initial="hidden"
                 animate="visible"
                 variants={sectionVariants}
@@ -160,7 +162,7 @@ const Home = () => {
               </motion.section>
               <motion.section
                 className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
-                style={{ height: "26vh" }}
+                style={{ height: isIphoneSE ? "32vh" : "26vh" }}
                 initial="hidden"
                 animate="visible"
                 variants={sectionVariants}

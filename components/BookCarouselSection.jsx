@@ -64,9 +64,6 @@ const BookCarouselSection = ({ books }) => {
           </div>
         ))}
       </Slider>
-      {isMobile && (
-        <div className="absolute bottom-0 left-0 right-0 h-[50px] bg-gradient-to-t from-black via-transparent to-transparent"></div>
-      )}
     </div>
   );
 };
