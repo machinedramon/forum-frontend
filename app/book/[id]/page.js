@@ -289,9 +289,31 @@ const BookDetails = ({ params }) => {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
       <div className="absolute inset-0 bg-gradient-to-r from-black to-transparent"></div>
-      <div className="relative z-10 h-full flex flex-col w-full">
-        <div className="container mx-auto p-4 bg-black bg-opacity-75 text-white h-full flex">
-          <div className="w-1/3 flex items-center justify-center">
+      <div className="relative z-10 h-full w-full overflow-y-auto p-4 bg-black bg-opacity-75 text-white flex flex-col md:flex-row">
+        <div className="flex flex-col md:flex-row md:w-1/3 items-center justify-center mb-4 md:mb-0">
+          <div className="flex w-full items-center justify-center md:hidden mb-4">
+            <Chip color="primary" size="lg" radius="sm" className="mr-2 py-5">
+              Livro
+            </Chip>
+            <Select
+              defaultSelectedKeys={[selectedEdition?.id]}
+              onChange={(e) => handleEditionChange(e.target.value)}
+              aria-label="Selecione a edição"
+              className="text-white max-w-full md:max-w-[130px]"
+              isDisabled={editions.length === 1}
+            >
+              {editions.map((edition) => (
+                <SelectItem
+                  key={edition.id}
+                  value={edition.id}
+                  className="text-black"
+                >
+                  {`${edition.number}ª Edição`}
+                </SelectItem>
+              ))}
+            </Select>
+          </div>
+          <div className="min-h-[320px] flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={coverImageUrl}
@@ -303,105 +325,107 @@ const BookDetails = ({ params }) => {
                 <Image
                   src={coverImageUrl}
                   alt={title}
-                  className="max-w-full h-[500px] w-auto rounded-md object-cover"
+                  className="w-40 md:w-auto md:h-[500px] rounded-md object-cover"
                   style={{ objectFit: "cover", objectPosition: "top" }}
                 />
               </motion.div>
             </AnimatePresence>
           </div>
-          <div className="w-2/3 flex flex-col h-full">
-            <div className="h-1/4 flex flex-col justify-end">
-              <Chip color="primary" radius="sm" className="mb-4">
+        </div>
+        <div className="w-full md:w-2/3 flex flex-col h-full">
+          <div className="flex flex-col justify-end mb-4 md:mb-0">
+            <div className="hidden md:flex items-center mb-4">
+              <Chip color="primary" radius="sm" className="mr-2">
                 Livro
               </Chip>
-              <h1 className="text-4xl font-bold mb-2">{title}</h1>
-              <h2 className="text-2xl mb-4">{subtitle}</h2>
-              <div className="flex gap-4 mb-4">
-                <Button color="primary" startContent={<FaFolderPlus />}>
-                  Adicionar à pasta
-                </Button>
-                <Button
-                  color="primary"
-                  startContent={<FaBook />}
-                  onClick={handleBibReference}
-                >
-                  Referência bibliográfica
-                </Button>
-                <Select
-                  defaultSelectedKeys={[selectedEdition?.id]}
-                  onChange={(e) => handleEditionChange(e.target.value)}
-                  aria-label="Selecione a edição"
-                  className="text-white max-w-[130px]"
-                  isDisabled={editions.length === 1}
-                >
-                  {editions.map((edition) => (
-                    <SelectItem
-                      key={edition.id}
-                      value={edition.id}
-                      className="text-black"
-                    >
-                      {`${edition.number}ª Edição`}
-                    </SelectItem>
-                  ))}
-                </Select>
-              </div>
+              <Select
+                defaultSelectedKeys={[selectedEdition?.id]}
+                onChange={(e) => handleEditionChange(e.target.value)}
+                aria-label="Selecione a edição"
+                className="text-white max-w-full md:max-w-[130px]"
+                isDisabled={editions.length === 1}
+              >
+                {editions.map((edition) => (
+                  <SelectItem
+                    key={edition.id}
+                    value={edition.id}
+                    className="text-black"
+                  >
+                    {`${edition.number}ª Edição`}
+                  </SelectItem>
+                ))}
+              </Select>
             </div>
-            <div className="h-3/4 overflow-y-scroll">
-              <Tabs aria-label="Book Details">
-                <Tab key="capitulos" title="Capítulos" className="h-fit">
-                  <Card className="h-fit flex flex-col">
-                    <CardBody className="overflow-hidden">
-                      {renderBookDescription()}
-                      {editions && (
-                        <div>
-                          <Accordion
-                            variant="shadow"
-                            defaultExpandedKeys={["pre-textual"]}
+            <h1 className="text-2xl md:text-4xl font-bold mb-2">{title}</h1>
+            <h2 className="text-xl md:text-2xl mb-4">{subtitle}</h2>
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-4">
+              <Button color="primary" startContent={<FaFolderPlus />}>
+                Adicionar à pasta
+              </Button>
+              <Button
+                color="primary"
+                startContent={<FaBook />}
+                onClick={handleBibReference}
+              >
+                Referência bibliográfica
+              </Button>
+            </div>
+          </div>
+          <div className="h-auto overflow-y-auto">
+            <Tabs aria-label="Book Details">
+              <Tab key="capitulos" title="Capítulos" className="h-fit">
+                <Card className="h-fit flex flex-col">
+                  <CardBody className="overflow-hidden">
+                    {renderBookDescription()}
+                    {editions && (
+                      <div>
+                        <Accordion
+                          variant="shadow"
+                          defaultExpandedKeys={["pre-textual"]}
+                        >
+                          <AccordionItem
+                            key="pre-textual"
+                            aria-label="Pre-textual"
+                            title="Pre-textual"
                           >
-                            <AccordionItem
-                              key="pre-textual"
-                              aria-label="Pre-textual"
-                              title="Pre-textual"
-                            >
-                              {renderChapters("pre-textual")}
-                            </AccordionItem>
-                            <AccordionItem
-                              key="capitulo"
-                              aria-label="Capítulos"
-                              title="Capítulos"
-                            >
-                              {renderChapters("capitulo")}
-                            </AccordionItem>
-                            <AccordionItem
-                              key="pos-textual"
-                              aria-label="Pos-textual"
-                              title={"Pos-textual"}
-                            >
-                              {renderChapters("pos-textual")}
-                            </AccordionItem>
-                          </Accordion>
-                        </div>
-                      )}
-                    </CardBody>
-                  </Card>
-                </Tab>
-                <Tab key="info" title="Informações" className="h-fit">
-                  <Card className="h-fit flex flex-col">
-                    <CardBody className="overflow-hidden">
-                      <ScrollShadow className="h-full">
-                        <h3 className="text-2xl font-bold mb-4">Detalhes</h3>
-                        {details.map((detail, index) => (
-                          <p key={index} className="mb-2">
-                            <span className="font-bold">{detail.label}:</span>{" "}
-                            {detail.value}
-                          </p>
-                        ))}
-                      </ScrollShadow>
-                    </CardBody>
-                  </Card>
-                </Tab>
-              </Tabs>
-            </div>
+                            {renderChapters("pre-textual")}
+                          </AccordionItem>
+                          <AccordionItem
+                            key="capitulo"
+                            aria-label="Capítulos"
+                            title="Capítulos"
+                          >
+                            {renderChapters("capitulo")}
+                          </AccordionItem>
+                          <AccordionItem
+                            key="pos-textual"
+                            aria-label="Pos-textual"
+                            title={"Pos-textual"}
+                          >
+                            {renderChapters("pos-textual")}
+                          </AccordionItem>
+                        </Accordion>
+                      </div>
+                    )}
+                  </CardBody>
+                </Card>
+              </Tab>
+              <Tab key="info" title="Informações" className="h-fit">
+                <Card className="h-fit flex flex-col">
+                  <CardBody className="overflow-hidden">
+                    <ScrollShadow className="h-full">
+                      <h3 className="text-2xl font-bold mb-4">Detalhes</h3>
+                      {details.map((detail, index) => (
+                        <p key={index} className="mb-2">
+                          <span className="font-bold">{detail.label}:</span>{" "}
+                          {detail.value}
+                        </p>
+                      ))}
+                    </ScrollShadow>
+                  </CardBody>
+                </Card>
+              </Tab>
+            </Tabs>
           </div>
         </div>
       </div>
