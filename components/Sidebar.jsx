@@ -73,7 +73,7 @@ const Sidebar = ({ isHovered, isMobile }) => {
 
   return (
     <motion.div
-      className="fixed left-0 top-0 h-full bg-black text-white flex flex-col justify-between py-4"
+      className="fixed z-50 left-0 top-0 h-full bg-black text-white flex flex-col justify-between py-4"
       initial={{ width: "10vw" }}
       animate={{ width: isHovered ? "14vw" : "10vw" }}
       transition={{ type: "spring", stiffness: 160, damping: 30 }}

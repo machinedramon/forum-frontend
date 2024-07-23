@@ -311,31 +311,59 @@ const BookDetails = ({ params }) => {
               </motion.div>
             </AnimatePresence>
           </div>
-          <div className="flex w-full items-center justify-center md:hidden mb-4">
-            <Chip color="primary" size="lg" radius="sm" className="mr-2 py-5">
-              Livro
-            </Chip>
-            <Select
-              defaultSelectedKeys={[selectedEdition?.id]}
-              onChange={(e) => handleEditionChange(e.target.value)}
-              aria-label="Selecione a edição"
-              className="text-white max-w-full md:max-w-[130px]"
-              isDisabled={editions.length === 1}
-            >
-              {editions.map((edition) => (
-                <SelectItem
-                  key={edition.id}
-                  value={edition.id}
-                  className="text-black"
-                >
-                  {`${edition.number}ª Edição`}
-                </SelectItem>
-              ))}
-            </Select>
-          </div>
         </div>
         <div className="w-full md:w-2/3 flex flex-col h-full">
           <div className="flex flex-col justify-end mb-4 md:mb-0">
+            <h1 className="text-2xl md:text-4xl font-bold mb-2">{title}</h1>
+            <h2 className="text-xl md:text-2xl mb-4">{subtitle}</h2>
+
+            {/* Chip e Select para mobile */}
+            {isMobile && (
+              <div className="flex w-full items-center justify-center md:hidden mb-4">
+                <Chip
+                  color="primary"
+                  size="lg"
+                  radius="sm"
+                  className="mr-2 py-5"
+                >
+                  Livro
+                </Chip>
+                <Select
+                  defaultSelectedKeys={[selectedEdition?.id]}
+                  onChange={(e) => handleEditionChange(e.target.value)}
+                  aria-label="Selecione a edição"
+                  className="text-white max-w-full md:max-w-[130px]"
+                  isDisabled={editions.length === 1}
+                >
+                  {editions.map((edition) => (
+                    <SelectItem
+                      key={edition.id}
+                      value={edition.id}
+                      className="text-black"
+                    >
+                      {`${edition.number}ª Edição`}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+            )}
+
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-4">
+              <Button color="default" startContent={<FaFolderPlus />}>
+                Adicionar à pasta
+              </Button>
+              <Button
+                color="default"
+                startContent={<FaBook />}
+                onClick={handleBibReference}
+              >
+                Referência bibliográfica
+              </Button>
+            </div>
+          </div>
+
+          {/* Chip e Select para desktop */}
+          {!isMobile && (
             <div className="hidden md:flex items-center mb-4">
               <Chip color="primary" radius="sm" className="mr-2">
                 Livro
@@ -358,21 +386,8 @@ const BookDetails = ({ params }) => {
                 ))}
               </Select>
             </div>
-            <h1 className="text-2xl md:text-4xl font-bold mb-2">{title}</h1>
-            <h2 className="text-xl md:text-2xl mb-4">{subtitle}</h2>
-            <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-4">
-              <Button color="default" startContent={<FaFolderPlus />}>
-                Adicionar à pasta
-              </Button>
-              <Button
-                color="default"
-                startContent={<FaBook />}
-                onClick={handleBibReference}
-              >
-                Referência bibliográfica
-              </Button>
-            </div>
-          </div>
+          )}
+
           <div className="h-auto w-full overflow-y-auto">
             <Tabs fullWidth={isMobile} aria-label="Book Details">
               <Tab key="capitulos" title="Capítulos" className="h-fit">

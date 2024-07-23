@@ -9,7 +9,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Hero from "@/components/Hero";
 import axios from "axios";
 import BookCarouselSection from "@/components/BookCarouselSection";
-import { useMediaQuery } from "react-responsive";
 
 const HERO_EXPANDED_HEIGHT = 70;
 const HERO_COLLAPSED_HEIGHT = 50;
@@ -28,7 +27,6 @@ const Home = () => {
   const scrollContainerRef = useRef(null);
   const [books, setBooks] = useState([]);
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
-  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const fetchBooks = async () => {
     try {
@@ -36,7 +34,7 @@ const Home = () => {
         "http://52.0.192.118:9910/books",
         null,
         {
-          params: { size: 50, verbose: false },
+          params: { size: 50, verbose: false }, // Adiciona o parâmetro verbose
         }
       );
       const booksData = response.data.hits.hits.map((hit) => hit._source);
@@ -53,19 +51,15 @@ const Home = () => {
 
   useEffect(() => {
     const handleMouseEnter = () => {
-      if (!isMobile) {
-        setHeroHeight(HERO_COLLAPSED_HEIGHT);
-        setIsHeroExpanded(false);
-        scrollContainerRef.current.style.height = `${SECTIONS_COLLAPSED_HEIGHT}vh`;
-      }
+      setHeroHeight(HERO_COLLAPSED_HEIGHT);
+      setIsHeroExpanded(false);
+      scrollContainerRef.current.style.height = `${SECTIONS_COLLAPSED_HEIGHT}vh`;
     };
 
     const handleMouseLeave = () => {
-      if (!isMobile) {
-        setHeroHeight(HERO_EXPANDED_HEIGHT);
-        setIsHeroExpanded(true);
-        scrollContainerRef.current.style.height = `${SECTIONS_EXPANDED_HEIGHT}vh`;
-      }
+      setHeroHeight(HERO_EXPANDED_HEIGHT);
+      setIsHeroExpanded(true);
+      scrollContainerRef.current.style.height = `${SECTIONS_EXPANDED_HEIGHT}vh`;
     };
 
     const container = scrollContainerRef.current;
@@ -76,7 +70,7 @@ const Home = () => {
       container.removeEventListener("mouseenter", handleMouseEnter);
       container.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [setHeroHeight, setIsHeroExpanded, isMobile]);
+  }, [setHeroHeight, setIsHeroExpanded]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -129,28 +123,51 @@ const Home = () => {
         hideScrollBar
         className="w-full light overflow-y-auto snap-y snap-mandatory transition-all ease-linear"
         ref={scrollContainerRef}
-        style={{
-          height: isMobile
-            ? `${SECTIONS_EXPANDED_HEIGHT * 2}vh`
-            : `${SECTIONS_EXPANDED_HEIGHT}vh`,
-        }}
+        style={{ height: `${SECTIONS_EXPANDED_HEIGHT}vh` }}
       >
         <AnimatePresence className="transition-all ease">
           {books.length > 0 && (
             <div className="ml-4">
-              {books.slice(0, 4).map((_, index) => (
-                <motion.section
-                  key={index}
-                  className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
-                  style={{ height: isMobile ? "30vh" : "40vh" }}
-                  initial="hidden"
-                  animate="visible"
-                  variants={sectionVariants}
-                  transition={{ duration: 0.5 }}
-                >
-                  <BookCarouselSection books={books} />
-                </motion.section>
-              ))}
+              <motion.section
+                className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
+                style={{ height: "26vh" }}
+                initial="hidden"
+                animate="visible"
+                variants={sectionVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <BookCarouselSection books={books} />
+              </motion.section>
+              <motion.section
+                className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
+                style={{ height: "26vh" }}
+                initial="hidden"
+                animate="visible"
+                variants={sectionVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <BookCarouselSection books={books} />
+              </motion.section>
+              <motion.section
+                className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
+                style={{ height: "26vh" }}
+                initial="hidden"
+                animate="visible"
+                variants={sectionVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <BookCarouselSection books={books} />
+              </motion.section>
+              <motion.section
+                className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
+                style={{ height: "26vh" }}
+                initial="hidden"
+                animate="visible"
+                variants={sectionVariants}
+                transition={{ duration: 0.5 }}
+              >
+                <BookCarouselSection books={books} />
+              </motion.section>
             </div>
           )}
         </AnimatePresence>
