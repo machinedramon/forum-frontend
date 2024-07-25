@@ -19,8 +19,6 @@ const Home = () => {
   const [books, setBooks] = useState([]);
   const [isClient, setIsClient] = useState(false);
 
-  const isIphoneSE = useMediaQuery({ maxWidth: 375, maxHeight: 667 });
-  const isGalaxyS8 = useMediaQuery({ maxWidth: 360, maxHeight: 740 });
   const isDesktop = useMediaQuery({ minWidth: 1024 });
   const isMobile = useMediaQuery({ maxWidth: 1024 });
 
@@ -38,14 +36,7 @@ const Home = () => {
     setIsClient(true);
   }, []);
 
-  let sectionHeight = "26vh";
-  if (isIphoneSE) {
-    sectionHeight = "36vh";
-  } else if (isGalaxyS8) {
-    sectionHeight = "30vh";
-  } else if (isDesktop) {
-    sectionHeight = "40vh";
-  }
+  const sectionHeight = isMobile ? "30vh" : "40vh";
 
   const fetchBooks = async () => {
     try {
