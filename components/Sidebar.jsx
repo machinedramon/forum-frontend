@@ -80,7 +80,7 @@ const Sidebar = ({ isHovered, isMobile, toggleSidebar }) => {
         </div>
         <div className="h-full flex flex-col">
           <div className="my-auto">
-            {menuItems.map(({ icon, ariaLabel, path }) => (
+            {menuItems.map(({ icon, ariaLabel, path, label }) => (
               <Button
                 key={ariaLabel}
                 color="default"
@@ -93,7 +93,7 @@ const Sidebar = ({ isHovered, isMobile, toggleSidebar }) => {
                 className="mb-4 w-full flex justify-start items-center"
               >
                 {icon}
-                <span className="ml-2">{ariaLabel}</span>
+                <span className="ml-2">{label}</span>
               </Button>
             ))}
           </div>
