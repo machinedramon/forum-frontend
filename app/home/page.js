@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import MainLayout from "@/components/MainLayout";
 import { LayoutContext } from "@/context/LayoutContext";
 import { BookContext } from "@/context/BookContext";
@@ -14,19 +14,22 @@ import BookCarouselSection from "@/components/BookCarouselSection";
 const Home = () => {
   const { heroHeight, setHeroHeight, setIsHeroExpanded } =
     useContext(LayoutContext);
-  const { setSelectedBook, selectedBook } = useContext(BookContext);
+  const { selectedBook, setSelectedBook, books, setBooks } =
+    useContext(BookContext);
   const scrollContainerRef = useRef(null);
-  const [books, setBooks] = useState([]);
+  const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
   const isDesktop = useMediaQuery({ minWidth: 1024 });
   const isMobile = useMediaQuery({ maxWidth: 1024 });
 
   const HERO_EXPANDED_HEIGHT = 70;
-  const HERO_COLLAPSED_HEIGHT = 50;
+  const HERO_COLLAPSED_HEIGHT = isDesktop ? 50 : 47;
   const SECTIONS_EXPANDED_HEIGHT = 30;
   const SECTIONS_COLLAPSED_HEIGHT = isDesktop ? 50 : 47;
   const animationDuration = 0.5;
+  const sectionHeight = isMobile ? "30vh" : "40vh";
+
   const sectionVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -35,8 +38,6 @@ const Home = () => {
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  const sectionHeight = isMobile ? "30vh" : "40vh";
 
   const fetchBooks = async () => {
     try {
@@ -58,6 +59,17 @@ const Home = () => {
   useEffect(() => {
     fetchBooks();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!selectedBook) {
+        setCurrentBookIndex((prevIndex) => (prevIndex + 1) % books.length);
+        setSelectedBook(books[currentBookIndex]);
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [books, selectedBook, currentBookIndex]);
 
   useEffect(() => {
     if (isClient && scrollContainerRef.current) {
@@ -82,8 +94,10 @@ const Home = () => {
       container.addEventListener("mouseleave", handleMouseLeave);
 
       return () => {
-        container.removeEventListener("mouseenter", handleMouseEnter);
-        container.removeEventListener("mouseleave", handleMouseLeave);
+        if (container) {
+          container.removeEventListener("mouseenter", handleMouseEnter);
+          container.removeEventListener("mouseleave", handleMouseLeave);
+        }
       };
     }
   }, [setHeroHeight, setIsHeroExpanded, isDesktop, isClient]);

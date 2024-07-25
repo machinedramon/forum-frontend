@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Button,
@@ -11,12 +11,11 @@ import {
   ModalFooter,
   Chip,
   useDisclosure,
-  ScrollShadow,
 } from "@nextui-org/react";
 import { FaBook } from "react-icons/fa";
 import { LayoutContext } from "@/context/LayoutContext";
 import { useRouter } from "next/navigation";
-import { BookContext } from "@/context/BookContext";
+import { ScrollShadow } from "@nextui-org/react";
 import { useMediaQuery } from "react-responsive";
 
 const animationVariants = {
@@ -31,10 +30,20 @@ const truncateText = (text, limit) => {
   return text;
 };
 
-const getDynamicFontSize = (textLength) => {
-  if (textLength > 40) return "text-2xl md:text-3xl";
-  if (textLength > 30) return "text-3xl md:text-4xl";
-  return "text-4xl md:text-5xl";
+const getDynamicFontSize = (width, height, textLength) => {
+  if (width > 1024) {
+    if (textLength > 40) return "text-5xl md:text-6xl";
+    if (textLength > 30) return "text-4xl md:text-5xl";
+    return "text-3xl md:text-4xl";
+  } else if (width > 768) {
+    if (textLength > 40) return "text-4xl md:text-5xl";
+    if (textLength > 30) return "text-3xl md:text-4xl";
+    return "text-2xl md:text-3xl";
+  } else {
+    if (textLength > 40) return "text-2xl md:text-3xl";
+    if (textLength > 30) return "text-xl md:text-2xl";
+    return "text-lg md:text-xl";
+  }
 };
 
 const Hero = ({
@@ -49,16 +58,48 @@ const Hero = ({
   const { isHeroExpanded } = useContext(LayoutContext);
   const { isOpen, onOpenChange } = useDisclosure();
   const router = useRouter();
-  const { setSelectedBook } = useContext(BookContext);
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
-  if (!title) return null;
+  const [fontSize, setFontSize] = useState("text-lg");
 
-  const remainingSubjects = subjects.length;
+  useEffect(() => {
+    const updateFontSize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setFontSize(getDynamicFontSize(width, height, title.length));
+    };
+
+    updateFontSize();
+
+    window.addEventListener("resize", updateFontSize);
+    return () => {
+      window.removeEventListener("resize", updateFontSize);
+    };
+  }, [title.length]);
 
   const handleMoreInfoClick = () => {
     router.push(`/book/${id}`);
   };
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Pause the cycling animation
+      } else {
+        // Resume the cycling animation
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
+  if (!title) return null;
+
+  const remainingSubjects = subjects.length;
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -101,9 +142,7 @@ const Hero = ({
           <AnimatePresence>
             <motion.h1
               key={`${title}-heading`}
-              className={`font-extrabold ${getDynamicFontSize(title.length)} ${
-                isMobile ? "text-lg md:text-xl" : ""
-              }`}
+              className={`font-extrabold ${fontSize}`}
               initial="hidden"
               animate="visible"
               exit="hidden"
