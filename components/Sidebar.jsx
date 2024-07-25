@@ -18,7 +18,7 @@ const buttonVariants = {
   visible: { opacity: 1, x: 0 },
 };
 
-const Sidebar = ({ isHovered, isMobile }) => {
+const Sidebar = ({ isHovered, isMobile, toggleSidebar }) => {
   const router = useRouter();
   const menuItems = [
     { label: "Início", icon: <Home />, ariaLabel: "Home", path: "/home" },
@@ -53,21 +53,80 @@ const Sidebar = ({ isHovered, isMobile }) => {
 
   if (isMobile) {
     return (
-      <div className="flex justify-between w-full">
-        {menuItems.map(({ icon, ariaLabel, path }) => (
+      <motion.div
+        className="fixed top-0 right-0 h-full bg-black text-white z-50 flex flex-col items-center px-10 pb-4 justify-between"
+        initial={{ x: "100%" }}
+        animate={{ x: "0%" }}
+        exit={{ x: "100%" }}
+        transition={{ duration: 0.3 }}
+        style={{ width: "fit-content" }}
+      >
+        <button
+          onClick={toggleSidebar}
+          aria-label="Close Menu"
+          className="text-white self-end mb-4 text-2xl"
+        >
+          &times;
+        </button>
+        <div className="flex flex-col items-center mb-4">
+          <Avatar
+            src="https://i.pravatar.cc/150"
+            size="md"
+            isBordered
+            color="primary"
+            className="mb-2"
+          />
+          <p className="text-sm font-semibold">Diego F.</p>
+        </div>
+        <div className="h-full flex flex-col">
+          <div className="my-auto">
+            {menuItems.map(({ icon, ariaLabel, path }) => (
+              <Button
+                key={ariaLabel}
+                color="default"
+                variant="light"
+                aria-label={ariaLabel}
+                onClick={() => {
+                  router.push(path);
+                  toggleSidebar();
+                }}
+                className="mb-4 w-full flex justify-start items-center"
+              >
+                {icon}
+                <span className="ml-2">{ariaLabel}</span>
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-auto">
           <Button
-            key={ariaLabel}
-            isIconOnly
+            auto
             color="default"
             variant="light"
-            aria-label={ariaLabel}
-            onClick={() => router.push(path)}
-            className="w-full"
+            className="text-xs mb-2 w-full"
+            size="sm"
+            onClick={() => {
+              router.push("/help");
+              toggleSidebar();
+            }}
           >
-            {icon}
+            Ajuda
           </Button>
-        ))}
-      </div>
+          <Button
+            auto
+            color="default"
+            variant="light"
+            className="text-xs w-full"
+            size="sm"
+            onClick={() => {
+              router.push("/logout");
+              toggleSidebar();
+            }}
+          >
+            Sair
+          </Button>
+        </div>
+      </motion.div>
     );
   }
 

@@ -26,7 +26,7 @@ const BookCarouselSection = ({ books }) => {
   const settings = {
     slidesToShow: isMobile ? 2 : 7.5,
     arrows: false,
-    dots: true,
+    dots: false,
     infinite: false,
     speed: 500,
     variableWidth: true,

@@ -519,7 +519,7 @@ const BookDetails = ({ params }) => {
         className="z-50"
         scrollBehavior="inside"
       >
-        <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl">
+        <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl text-white">
           <ModalHeader>
             <h2>Descrição</h2>
           </ModalHeader>
@@ -539,7 +539,7 @@ const BookDetails = ({ params }) => {
         className="z-50"
         scrollBehavior="inside"
       >
-        <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl">
+        <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl text-white ">
           <ModalHeader>
             <h2>Referência Bibliográfica</h2>
           </ModalHeader>

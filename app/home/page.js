@@ -11,23 +11,12 @@ import Hero from "@/components/Hero";
 import axios from "axios";
 import BookCarouselSection from "@/components/BookCarouselSection";
 
-const HERO_EXPANDED_HEIGHT = 70;
-const HERO_COLLAPSED_HEIGHT = 50;
-const SECTIONS_EXPANDED_HEIGHT = 30;
-const SECTIONS_COLLAPSED_HEIGHT = 50;
-const animationDuration = 0.5;
-const sectionVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
 const Home = () => {
   const { heroHeight, setHeroHeight, setIsHeroExpanded } =
     useContext(LayoutContext);
-  const { setSelectedBook } = useContext(BookContext);
+  const { setSelectedBook, selectedBook } = useContext(BookContext);
   const scrollContainerRef = useRef(null);
   const [books, setBooks] = useState([]);
-  const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
   const isIphoneSE = useMediaQuery({ maxWidth: 375, maxHeight: 667 });
@@ -35,13 +24,23 @@ const Home = () => {
   const isDesktop = useMediaQuery({ minWidth: 1024 });
   const isMobile = useMediaQuery({ maxWidth: 1024 });
 
+  const HERO_EXPANDED_HEIGHT = 70;
+  const HERO_COLLAPSED_HEIGHT = 50;
+  const SECTIONS_EXPANDED_HEIGHT = 30;
+  const SECTIONS_COLLAPSED_HEIGHT = isDesktop ? 50 : 47;
+  const animationDuration = 0.5;
+  const sectionVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
 
   let sectionHeight = "26vh";
   if (isIphoneSE) {
-    sectionHeight = "32vh";
+    sectionHeight = "36vh";
   } else if (isGalaxyS8) {
     sectionHeight = "30vh";
   } else if (isDesktop) {
@@ -67,7 +66,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchBooks();
-  }, [setSelectedBook]);
+  }, []);
 
   useEffect(() => {
     if (isClient && scrollContainerRef.current) {
@@ -98,16 +97,6 @@ const Home = () => {
     }
   }, [setHeroHeight, setIsHeroExpanded, isDesktop, isClient]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBookIndex((prevIndex) => (prevIndex + 1) % books.length);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [books]);
-
-  const bookToShow = books[currentBookIndex];
-
   return (
     <MainLayout>
       {isClient && (
@@ -122,9 +111,9 @@ const Home = () => {
             id="hero"
           >
             <AnimatePresence mode="wait">
-              {bookToShow && (
+              {selectedBook && (
                 <motion.div
-                  key={bookToShow.id}
+                  key={selectedBook.id}
                   className="w-full h-full"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -132,17 +121,17 @@ const Home = () => {
                   transition={{ duration: animationDuration }}
                 >
                   <Hero
-                    title={bookToShow.text_2}
-                    summary={bookToShow.text_3}
-                    bgImage={bookToShow.bgImage}
+                    title={selectedBook.text_2}
+                    summary={selectedBook.text_3}
+                    bgImage={selectedBook.bgImage}
                     pdfLink="#"
                     publication_year={new Date(
-                      bookToShow.publish_date
+                      selectedBook.publish_date
                     ).getFullYear()}
                     subjects={
-                      bookToShow.filters?.map((filter) => filter.title) || []
+                      selectedBook.filters?.map((filter) => filter.title) || []
                     }
-                    id={bookToShow.id}
+                    id={selectedBook.id}
                   />
                 </motion.div>
               )}
@@ -160,19 +149,20 @@ const Home = () => {
             <AnimatePresence className="transition-all ease">
               {books.length > 0 && (
                 <div className="ml-4">
-                  {books.slice(0, 4).map((_, index) => (
+                  {books.slice(0, 4).map((book, index) => (
                     <motion.section
                       key={index}
-                      className="snap-start flex items-center justify-center bg-blue-500 transition-all ease-in"
-                      style={{
-                        height: sectionHeight,
-                      }}
+                      className="snap-start flex items-center justify-center transition-all ease-in"
                       initial="hidden"
                       animate="visible"
                       variants={sectionVariants}
                       transition={{ duration: 0.5 }}
+                      style={{ height: sectionHeight }}
                     >
-                      <BookCarouselSection books={books} />
+                      <BookCarouselSection
+                        books={books}
+                        onBookClick={setSelectedBook}
+                      />
                     </motion.section>
                   ))}
                 </div>

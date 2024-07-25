@@ -1,4 +1,3 @@
-// components/Hero.jsx
 "use client";
 import React, { useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -80,7 +79,7 @@ const Hero = ({
         }`}
       >
         <AnimatePresence>
-          {isHeroExpanded && (
+          {!isMobile && isHeroExpanded && (
             <motion.div
               key={`${title}-logo`}
               className="absolute top-0 left-0 py-4"
@@ -102,7 +101,9 @@ const Hero = ({
           <AnimatePresence>
             <motion.h1
               key={`${title}-heading`}
-              className={`font-extrabold ${getDynamicFontSize(title.length)}`}
+              className={`font-extrabold ${getDynamicFontSize(title.length)} ${
+                isMobile ? "text-lg md:text-xl" : ""
+              }`}
               initial="hidden"
               animate="visible"
               exit="hidden"
@@ -126,8 +127,24 @@ const Hero = ({
               <div className="flex items-center">
                 <span className="text-md font-light flex items-center">
                   <b className="font-bold mr-1">Assuntos:</b>
-                  {isMobile
-                    ? remainingSubjects > 0 && (
+                  {isMobile ? (
+                    remainingSubjects > 0 && (
+                      <Button
+                        isIconOnly
+                        type="button"
+                        variant="flat"
+                        size="md"
+                        className="ml-2 cursor-pointer"
+                        aria-label="Mostrar mais assuntos"
+                        onPress={() => onOpenChange(true)}
+                      >
+                        +{remainingSubjects}
+                      </Button>
+                    )
+                  ) : (
+                    <>
+                      {subjects.slice(0, 3).join(", ")}
+                      {remainingSubjects > 3 && (
                         <Button
                           isIconOnly
                           type="button"
@@ -137,19 +154,20 @@ const Hero = ({
                           aria-label="Mostrar mais assuntos"
                           onPress={() => onOpenChange(true)}
                         >
-                          +{remainingSubjects}
+                          +{remainingSubjects - 3}
                         </Button>
-                      )
-                    : subjects.slice(0, 3).join(", ")}
+                      )}
+                    </>
+                  )}
                   <Modal
                     isOpen={isOpen}
                     placement="auto"
                     onOpenChange={onOpenChange}
-                    className="bg-black max-w-fit"
+                    className="bg-black max-w-fit text-white"
                     closeButton={false}
                     classNames={{ closeButton: "hidden" }}
                   >
-                    <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl">
+                    <ModalContent className="bg-black max-h-[400px] transition-all shadow-xl text-white">
                       {(onClose) => (
                         <>
                           <ModalHeader className="flex flex-col gap-1">
@@ -204,7 +222,7 @@ const Hero = ({
               variants={animationVariants}
               transition={{ delay: 0.3, duration: 0.5 }}
             >
-              {truncateText(summary, 160)}
+              {truncateText(summary, isMobile ? 65 : 160)}
             </motion.p>
             <motion.div
               key={`${title}-buttons`}
