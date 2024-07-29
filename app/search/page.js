@@ -17,11 +17,11 @@ import {
   Badge,
   RadioGroup,
   Radio,
+  Tooltip,
 } from "@nextui-org/react";
 import { Filter2, InfoCircle, Search } from "react-iconly";
 import { FaBook, FaFileAlt } from "react-icons/fa";
 import { RiRobot2Fill } from "react-icons/ri";
-import { Tooltip } from "@nextui-org/react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -125,24 +125,15 @@ const SearchPage = () => {
       const startTime = Date.now();
 
       try {
-        const response = await axios.post(
-          "http://52.0.192.118:9910/smartsearch",
-          {
-            query,
-          }
-        );
+        const response = await axios.post("http://localhost:9910/smartsearch", {
+          query,
+        });
         const endTime = Date.now();
         setSearchTime(endTime - startTime);
-
-        // Log the response for debugging
-        console.log("Response data:", response.data);
 
         setSearchTerms(response.data.searchTerms);
 
         const hits = response.data.hits.hits;
-
-        // Log hits for debugging
-        console.log("Hits:", hits);
 
         setResults(hits);
         setTotalOccurrences(hits.length);
@@ -157,12 +148,6 @@ const SearchPage = () => {
       }
     }
   };
-
-  useEffect(() => {
-    if (searchTerms.length > 0) {
-      console.log("Search terms for highlighting:", searchTerms);
-    }
-  }, [searchTerms]);
 
   useEffect(() => {
     const handleScroll = () => {
