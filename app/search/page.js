@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
+import { useMediaQuery } from "react-responsive";
 import MainLayout from "@/components/MainLayout";
 import {
   Input,
@@ -111,6 +112,8 @@ const SearchPage = () => {
   const [searchTerms, setSearchTerms] = useState([]);
   const [totalOccurrences, setTotalOccurrences] = useState(0);
   const [isSmartSearch, setIsSmartSearch] = useState(false);
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
+  const isMobile = useMediaQuery({ maxWidth: 1024 });
 
   const cardRefs = useRef([]);
 
@@ -231,8 +234,8 @@ const SearchPage = () => {
   return (
     <MainLayout>
       <div className="p-4 h-screen overflow-y-auto">
-        <div className="search-container mb-4 flex flex-col items-center gap-x-4 gap-y-4">
-          <div className="w-full flex justify-between gap-x-4">
+        <div className="search-container mb-4 flex flex-col items-center gap-4 h-[16%]">
+          <div className="w-full flex flex-row justify-between gap-4">
             <AnimatePresence mode="wait">
               {isSmartSearch ? (
                 <motion.div
@@ -251,7 +254,7 @@ const SearchPage = () => {
                     fullWidth
                     variant="faded"
                     color="default"
-                    className="neon-effect" // Adicione esta classe
+                    className="neon-effect"
                   />
                 </motion.div>
               ) : (
@@ -274,11 +277,11 @@ const SearchPage = () => {
               )}
             </AnimatePresence>
             <Button onClick={handleSearch} className="w-28">
-              <Search />
+              <Search className="mr-1" />
               Buscar
             </Button>
           </div>
-          <div className="w-full flex justify-between">
+          <div className="w-full flex justify-between gap-4 items-center h-12">
             <Tooltip
               className="bg-[#0A0707] mt-2 shadow-lg"
               showArrow={false}
@@ -292,7 +295,7 @@ const SearchPage = () => {
                     <span className="text-[#fff] bg-[#DA002B] flex w-fit items-center mb-2 p-2 rounded-lg">
                       <RiRobot2Fill className="mr-1" />
                       Pesquisa Inteligente
-                    </span>{" "}
+                    </span>
                     A busca inteligente transforma suas consultas em buscas
                     precisas, explorando títulos, descrições e conteúdos
                     completos. Aproveite o poder da IA para expandir, melhorar
@@ -301,70 +304,113 @@ const SearchPage = () => {
                 </span>
               }
             >
-              <div className="flex">
-                <Switch
-                  checked={isSmartSearch}
-                  onChange={(e) => setIsSmartSearch(e.target.checked)}
-                  size="md"
-                  color="default"
-                  className="flex"
+              <Switch
+                checked={isSmartSearch}
+                onChange={(e) => setIsSmartSearch(e.target.checked)}
+                size="md"
+                color="default"
+                className="flex"
+              >
+                <Badge
+                  content="novo"
+                  color="primary"
+                  shape="rectangle"
+                  size="sm"
+                  className="top-[-4px]"
                 >
-                  <Badge
-                    content="novo"
-                    color="primary"
-                    shape="rectangle"
-                    size="sm"
-                    className="top-[-4px]"
-                  >
-                    Pesquisa Inteligente
-                  </Badge>
-                </Switch>
-              </div>
+                  Pesquisa Inteligente
+                </Badge>
+              </Switch>
             </Tooltip>
-            <Tooltip
-              className="bg-[#0A0707] mt-2 shadow-lg"
-              showArrow={false}
-              placement="bottom-start"
-              content={
-                <span className="bg-[#0A0707] max-w-64 p-2 flex flex-col">
-                  <span className="text-xs mb-4 bg-[#ffffff21] w-fit flex gap-x-1 px-1">
-                    <InfoCircle size={16} /> Info
+            {!isSmartSearch && isDesktop && (
+              <Tooltip
+                className="bg-[#0A0707] mt-2 shadow-lg"
+                showArrow={false}
+                placement="bottom-start"
+                content={
+                  <span className="bg-[#0A0707] max-w-64 p-2 flex flex-col">
+                    <span className="text-xs mb-4 bg-[#ffffff21] w-fit flex gap-x-1 px-1">
+                      <InfoCircle size={16} /> Info
+                    </span>
+                    <div className="w-64">
+                      <span className="text-[#fff] bg-[#DA002B] flex w-fit items-center mb-2">
+                        Amplitude:
+                      </span>
+                      <span>
+                        A amplitude &quot;Somente no título&quot; contempla
+                        títulos de livros, capítulos, revistas, doutrinas,
+                        jurisprudências e vídeos.
+                      </span>
+                    </div>
                   </span>
-                  <div className="w-64">
-                    <span className="text-[#fff] bg-[#DA002B] flex w-fit items-center mb-2">
-                      Amplitude:
-                    </span>
-                    <span>
-                      A amplitude &quot;Somente no título&quot; contempla
-                      títulos de livros, capítulos, revistas, doutrinas,
-                      jurisprudências e vídeos.
-                    </span>
-                  </div>
-                </span>
-              }
-            >
-              <div className="flex gap-x-2">
-                <RadioGroup
-                  orientation="horizontal"
-                  defaultValue={"all-content"}
-                >
-                  <Radio color="primary" value="all-content">
-                    Em todo conteúdo
-                  </Radio>
-                  <Radio color="primary" value="only-title">
-                    Somente no título
-                  </Radio>
-                </RadioGroup>
-                <InfoCircle />
-              </div>
-            </Tooltip>
-            <Button onClick={handleSearch} className="w-28">
-              <Filter2 />
-              Filtrar
-            </Button>
+                }
+              >
+                <div className="gap-x-2 flex">
+                  <RadioGroup
+                    orientation="horizontal"
+                    defaultValue={"all-content"}
+                  >
+                    <Radio color="primary" value="all-content">
+                      Em todo conteúdo
+                    </Radio>
+                    <Radio color="primary" value="only-title">
+                      Somente no título
+                    </Radio>
+                  </RadioGroup>
+                  <InfoCircle />
+                </div>
+              </Tooltip>
+            )}
+            {!isSmartSearch && (
+              <Button onClick={handleSearch} className="w-28">
+                <Filter2 className="mr-1" />
+                Filtrar
+              </Button>
+            )}
           </div>
+          {!isSmartSearch && isMobile && (
+            <div className="w-full flex flex-col gap-4">
+              <Tooltip
+                className="bg-[#0A0707] mt-2 shadow-lg"
+                showArrow={false}
+                placement="bottom-start"
+                content={
+                  <span className="bg-[#0A0707] max-w-64 p-2 flex flex-col">
+                    <span className="text-xs mb-4 bg-[#ffffff21] w-fit flex gap-x-1 px-1">
+                      <InfoCircle size={16} /> Info
+                    </span>
+                    <div className="w-64">
+                      <span className="text-[#fff] bg-[#DA002B] flex w-fit items-center mb-2">
+                        Amplitude:
+                      </span>
+                      <span>
+                        A amplitude &quot;Somente no título&quot; contempla
+                        títulos de livros, capítulos, revistas, doutrinas,
+                        jurisprudências e vídeos.
+                      </span>
+                    </div>
+                  </span>
+                }
+              >
+                <div className="gap-x-2 flex">
+                  <RadioGroup
+                    orientation="horizontal"
+                    defaultValue={"all-content"}
+                  >
+                    <Radio color="primary" value="all-content">
+                      Em todo conteúdo
+                    </Radio>
+                    <Radio color="primary" value="only-title">
+                      Somente no título
+                    </Radio>
+                  </RadioGroup>
+                  <InfoCircle />
+                </div>
+              </Tooltip>
+            </div>
+          )}
         </div>
-        <div className="flex justify-between">
+        <div className="flex flex-col sm:flex-row justify-between">
           {searchTime > 0 && (
             <div className="mb-4">
               <p>Pesquisa concluída em {searchTime.toFixed(2)} ms</p>
@@ -397,7 +443,7 @@ const SearchPage = () => {
               : "Ocorreu um erro. Tente novamente."}
           </p>
         ) : (
-          <div className="results-container flex flex-col gap-6">
+          <div className="results-container h-[74%] flex flex-col gap-6">
             <AnimatePresence>
               {results.length > 0 ? (
                 results.map((result, index) => (
@@ -413,19 +459,19 @@ const SearchPage = () => {
                       className="card shadow-lg"
                       ref={(el) => (cardRefs.current[index] = el)}
                     >
-                      <CardBody className="flex flex-row">
-                        <div className="w-1/3 flex justify-center relative">
+                      <CardBody className="flex flex-col sm:flex-row">
+                        <div className="w-full sm:w-1/3 flex justify-center relative">
                           <Image
                             src={getCoverImageUrl(result._id)}
                             alt={result._source.text_2 || "Imagem da capa"}
-                            className="sticky-image object-cover h-[400px] rounded-md"
+                            className="sticky-image object-cover h-[200px] sm:h-[400px] rounded-md"
                           />
                         </div>
-                        <div className="flex flex-col justify-center w-2/3 gap-y-4">
+                        <div className="flex flex-col justify-center w-full sm:w-2/3 gap-y-4 mt-4 sm:mt-0">
                           <Chip variant="shadow" color="secondary">
                             Livro
                           </Chip>
-                          <h3 className="text-2xl font-bold">
+                          <h3 className="text-xl sm:text-2xl font-bold">
                             <a href="#">
                               {getHighlightedText(
                                 result._source.text_2,
@@ -450,7 +496,7 @@ const SearchPage = () => {
                                       key={`${result._id}-${editionIndex}`}
                                       className="mt-2 flex flex-col gap-y-4"
                                     >
-                                      <h4 className="text-xl font-semibold">
+                                      <h4 className="text-lg sm:text-xl font-semibold">
                                         <a href="#">
                                           {getHighlightedText(
                                             edition.title,
@@ -512,8 +558,8 @@ const SearchPage = () => {
                                                 <div
                                                   key={`${result._id}-${editionIndex}-${chapterIndex}`}
                                                 >
-                                                  <ScrollShadow className="flex flex-col gap-y-4 max-h-[300px] overflow-auto my-4 px-4">
-                                                    <h4 className="text-xl font-semibold mt-6">
+                                                  <ScrollShadow className="flex flex-col gap-y-4 max-h-[200px] sm:max-h-[300px] overflow-auto my-4 px-4">
+                                                    <h4 className="text-lg sm:text-xl font-semibold mt-6">
                                                       {`${chapterIndex + 1}. `}
                                                       <a
                                                         href="#"
@@ -525,7 +571,7 @@ const SearchPage = () => {
                                                         )}
                                                       </a>
                                                     </h4>
-                                                    <div className="flex justify-between">
+                                                    <div className="flex flex-col sm:flex-row justify-between">
                                                       <p>
                                                         <strong>
                                                           <span className="text-[#DA002B]">
@@ -575,10 +621,10 @@ const SearchPage = () => {
                   </motion.div>
                 ))
               ) : (
-                <div className="h-[80vh] flex flex-col items-center justify-center">
+                <div className="h-[100%] flex flex-col items-center justify-center">
                   <Image
                     alt=""
-                    className="h-[40vh]"
+                    className="h-[24vh]"
                     src="/no-results.svg"
                   ></Image>
                   <h1 className="mt-4 font-semibold text-lg">
