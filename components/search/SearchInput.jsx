@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Input,
   Button,
@@ -8,15 +8,62 @@ import {
   RadioGroup,
   Radio,
 } from "@nextui-org/react";
-import { Search, Filter2, InfoCircle } from "react-iconly";
-import { RiRobot2Fill } from "react-icons/ri";
+import { Search, Filter2, InfoCircle, Voice, Voice2 } from "react-iconly";
+import { RiRobot2Fill, RiMicFill } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 
 const SearchInput = ({ onSearch, isSmartSearch, setIsSmartSearch }) => {
   const [inputValue, setInputValue] = useState("");
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef(null);
+  const silenceTimeoutRef = useRef(null);
+
   const isDesktop = useMediaQuery({ minWidth: 1024 });
   const isMobile = useMediaQuery({ maxWidth: 1024 });
+
+  useEffect(() => {
+    if ("webkitSpeechRecognition" in window || "SpeechRecognition" in window) {
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.onresult = handleVoiceResult;
+      recognitionRef.current.onend = handleVoiceEnd;
+    } else {
+      alert("Seu navegador não suporta reconhecimento de voz.");
+    }
+  }, []);
+
+  const handleVoiceResult = (event) => {
+    clearTimeout(silenceTimeoutRef.current);
+    const transcript = Array.from(event.results)
+      .map((result) => result[0].transcript)
+      .join("");
+    setInputValue(transcript);
+
+    if (event.results[0].isFinal) {
+      silenceTimeoutRef.current = setTimeout(() => {
+        recognitionRef.current.stop();
+        onSearch(transcript); // Pesquisa automática após o silêncio
+      }, 2000);
+    }
+  };
+
+  const handleVoiceEnd = () => {
+    setListening(false);
+    //onSearch(inputValue);
+  };
+
+  const handleMicClick = () => {
+    if (listening) {
+      recognitionRef.current.stop();
+    } else {
+      setListening(true);
+      recognitionRef.current.start();
+    }
+  };
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -75,10 +122,16 @@ const SearchInput = ({ onSearch, isSmartSearch, setIsSmartSearch }) => {
             </motion.div>
           )}
         </AnimatePresence>
-        <Button onClick={handleSearchClick} className="w-28">
-          <Search className="mr-1" />
-          Buscar
+        <Button isIconOnly variant="solid" onClick={handleMicClick}>
+          {!listening && <Voice className="text-white" />}
+          {listening && <span className="text-[red] animate-pulse">⬤</span>}
         </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={handleSearchClick} className="w-28">
+            <Search className="mr-1" />
+            Buscar
+          </Button>
+        </div>
       </div>
       <div className="w-full flex justify-between gap-4 items-center h-12">
         <Tooltip
