@@ -14,38 +14,58 @@ import {
 } from "react-iconly";
 
 const buttonVariants = {
-  hidden: { opacity: 0, x: -2 },
-  visible: { opacity: 1, x: 0 },
+  hidden: { opacity: 0, width: 0 },
+  visible: { opacity: 1, width: "auto" },
 };
 
 const Sidebar = ({ isHovered, isMobile, toggleSidebar }) => {
   const router = useRouter();
   const menuItems = [
-    { label: "Início", icon: <Home />, ariaLabel: "Home", path: "/home" },
-    { label: "Buscar", icon: <Search />, ariaLabel: "Search", path: "/search" },
+    {
+      label: "Início",
+      icon: <Home size={24} />,
+      ariaLabel: "Home",
+      path: "/home",
+    },
+    {
+      label: "Buscar",
+      icon: <Search size={24} />,
+      ariaLabel: "Search",
+      path: "/search",
+    },
     {
       label: "Em alta",
-      icon: <Activity />,
+      icon: <Activity size={24} />,
       ariaLabel: "Trending",
       path: "/trending",
     },
-    { label: "Livros", icon: <Document />, ariaLabel: "Books", path: "/books" },
+    {
+      label: "Livros",
+      icon: <Document size={24} />,
+      ariaLabel: "Books",
+      path: "/books",
+    },
     {
       label: "Revistas",
-      icon: <Paper />,
+      icon: <Paper size={24} />,
       ariaLabel: "Magazines",
       path: "/magazines",
     },
-    { label: "Vídeos", icon: <Video />, ariaLabel: "Series", path: "/videos" },
+    {
+      label: "Vídeos",
+      icon: <Video size={24} />,
+      ariaLabel: "Series",
+      path: "/videos",
+    },
     {
       label: "Informativos",
-      icon: <InfoCircle />,
+      icon: <InfoCircle size={24} />,
       ariaLabel: "Informative",
       path: "/informative",
     },
     {
       label: "Minha lista",
-      icon: <FaPlus />,
+      icon: <FaPlus size={24} />,
       ariaLabel: "My List",
       path: "/mylist",
     },
@@ -151,7 +171,7 @@ const Sidebar = ({ isHovered, isMobile, toggleSidebar }) => {
             isBordered
             color="primary"
           />
-          <div className="flex flex-col items-start justify-center pt-1">
+          <div className="flex flex-col items-center justify-center pt-1">
             <p className="text-sm font-semibold pl-3">Diego F.</p>
             <Button
               size="sm"
@@ -167,42 +187,35 @@ const Sidebar = ({ isHovered, isMobile, toggleSidebar }) => {
       </div>
 
       <div className="mx-auto">
-        <div
-          className={`flex flex-col ${
-            isHovered ? "items-start" : "items-center"
-          } space-y-4 w-fit`}
-        >
-          {menuItems.map(({ label, icon, ariaLabel, path }, index) => (
+        <div className="flex flex-col items-start space-y-4 w-full px-4">
+          {menuItems.map(({ label, icon, ariaLabel, path }) => (
             <Button
               key={label}
-              isIconOnly={!isHovered}
               color="default"
-              variant={isHovered ? "light" : "flat"}
+              variant="light"
               aria-label={ariaLabel}
               size="md"
-              className="transition-all"
+              className="transition-all flex items-center"
               onClick={() => router.push(path)}
             >
-              <AnimatePresence>
-                <motion.span
-                  key={`${label}-icon`}
-                  initial="hidden"
-                  className={`${!isHovered ? "visible" : "hidden"}`}
-                >
-                  {icon}
-                </motion.span>
-                <motion.span
-                  key={`${label}-label`}
-                  variants={buttonVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  transition={{ duration: 0.3 }}
-                  className={`${isHovered ? "visible" : "hidden"}`}
-                >
-                  {label}
-                </motion.span>
-              </AnimatePresence>
+              <div className="flex items-center">
+                {icon}
+                <AnimatePresence>
+                  {isHovered && (
+                    <motion.span
+                      key={`${label}-label`}
+                      variants={buttonVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                      transition={{ duration: 0.3 }}
+                      className="ml-2"
+                    >
+                      {label}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </div>
             </Button>
           ))}
         </div>

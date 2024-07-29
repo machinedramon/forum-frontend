@@ -17,6 +17,7 @@ const Home = () => {
   const { selectedBook, setSelectedBook, books, setBooks } =
     useContext(BookContext);
   const scrollContainerRef = useRef(null);
+  const heroRef = useRef(null); // Adiciona referência ao Hero
   const [currentBookIndex, setCurrentBookIndex] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
@@ -102,11 +103,33 @@ const Home = () => {
     }
   }, [setHeroHeight, setIsHeroExpanded, isDesktop, isClient]);
 
+  useEffect(() => {
+    if (isClient && heroRef.current && scrollContainerRef.current) {
+      let scrollAmount = 0;
+      const handleScroll = (event) => {
+        event.preventDefault();
+        scrollAmount += event.deltaY;
+        requestAnimationFrame(() => {
+          scrollContainerRef.current.scrollTop += scrollAmount;
+          scrollAmount = 0;
+        });
+      };
+
+      const heroElement = heroRef.current;
+      heroElement.addEventListener("wheel", handleScroll);
+
+      return () => {
+        heroElement.removeEventListener("wheel", handleScroll);
+      };
+    }
+  }, [isClient]);
+
   return (
     <MainLayout>
       {isClient && (
         <>
           <motion.section
+            ref={heroRef} // Adiciona referência ao Hero
             className="flex items-center justify-center sticky top-0 z-10"
             initial={{
               height: isMobile ? "50vh" : `${HERO_EXPANDED_HEIGHT}vh`,
