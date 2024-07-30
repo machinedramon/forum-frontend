@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef } from "react";
 import {
   Input,
@@ -8,8 +9,8 @@ import {
   RadioGroup,
   Radio,
 } from "@nextui-org/react";
-import { Search, Filter2, InfoCircle, Voice, Voice2 } from "react-iconly";
-import { RiRobot2Fill, RiMicFill } from "react-icons/ri";
+import { Search, Filter2, InfoCircle, Voice } from "react-iconly";
+import { RiRobot2Fill } from "react-icons/ri";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "react-responsive";
 
@@ -31,6 +32,7 @@ const SearchInput = ({ onSearch, isSmartSearch, setIsSmartSearch }) => {
       recognitionRef.current.interimResults = true;
       recognitionRef.current.onresult = handleVoiceResult;
       recognitionRef.current.onend = handleVoiceEnd;
+      recognitionRef.current.onerror = handleVoiceError;
     } else {
       alert("Seu navegador não suporta reconhecimento de voz.");
     }
@@ -54,6 +56,12 @@ const SearchInput = ({ onSearch, isSmartSearch, setIsSmartSearch }) => {
   const handleVoiceEnd = () => {
     setListening(false);
     //onSearch(inputValue);
+  };
+
+  const handleVoiceError = (event) => {
+    console.error("Speech recognition error:", event.error);
+    setListening(false);
+    recognitionRef.current.stop();
   };
 
   const handleMicClick = () => {
@@ -122,11 +130,11 @@ const SearchInput = ({ onSearch, isSmartSearch, setIsSmartSearch }) => {
             </motion.div>
           )}
         </AnimatePresence>
-        <Button isIconOnly variant="solid" onClick={handleMicClick}>
-          {!listening && <Voice className="text-white" />}
-          {listening && <span className="text-[red] animate-pulse">⬤</span>}
-        </Button>
         <div className="flex items-center gap-2">
+          <Button isIconOnly variant="solid" onClick={handleMicClick}>
+            {!listening && <Voice className="text-white" />}
+            {listening && <span className="text-[red] animate-pulse">⬤</span>}
+          </Button>
           <Button onClick={handleSearchClick} className="w-28">
             <Search className="mr-1" />
             Buscar
