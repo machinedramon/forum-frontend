@@ -128,7 +128,7 @@ const BookDetails = ({ params }) => {
   const fetchBookDetails = async (bookId) => {
     try {
       const response = await axios.post(
-        `https:/api.forumconhecimento.com/books/${bookId}`,
+        `https://api.forumconhecimento.com/books/${bookId}`,
         { params: { verbose: true } } // Certifique-se de passar o parâmetro verbose se necessário
       );
       const bookData = response.data._source;

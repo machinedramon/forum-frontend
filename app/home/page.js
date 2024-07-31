@@ -44,7 +44,7 @@ const Home = () => {
   const fetchBooks = async () => {
     try {
       const response = await axios.post(
-        "https:/api.forumconhecimento.com/books",
+        "https://api.forumconhecimento.com/books",
         null,
         {
           params: { size: 50, verbose: false },
