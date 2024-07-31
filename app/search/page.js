@@ -105,7 +105,7 @@ const SearchPage = () => {
 
       try {
         const response = await axios.post(
-          "http://52.0.192.118:9910/smartsearch",
+          "https://api.forumconhecimento.com/smartsearch",
           {
             query: inputValue,
           }

@@ -15,9 +15,12 @@ export const SearchProvider = ({ children }) => {
     setSearchTime(null);
     try {
       const startTime = performance.now();
-      const response = await axios.post("http://52.0.192.118:9910/search", {
-        query,
-      });
+      const response = await axios.post(
+        "https:/api.forumconhecimento.com/search",
+        {
+          query,
+        }
+      );
       const endTime = performance.now();
       setSearchTime(endTime - startTime);
       setResults(response.data);
